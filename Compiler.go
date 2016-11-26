@@ -1,33 +1,53 @@
 package scarlet
 
-import "github.com/aerogo/codetree"
+import (
+	"strings"
+
+	"github.com/aerogo/codetree"
+)
 
 // CSSRule ...
 type CSSRule struct {
-	Selector    string
-	Definitions []string
+	Selector   string
+	Statements []string
+	Parent     *CSSRule
 }
 
-// getRules returns the CSS rules for a given code tree.
-func getRules(node *codetree.CodeTree) []*CSSRule {
+// compileChildren returns the CSS rules for a given code tree.
+// It iterates over the child nodes and finds the CSS rules.
+func compileChildren(node *codetree.CodeTree, parent *CSSRule) []*CSSRule {
 	var rules []*CSSRule
 
 	for _, child := range node.Children {
 		if len(child.Children) > 0 {
+			// Child rule
 			rule := &CSSRule{
 				Selector: child.Line,
+				Parent:   parent,
 			}
 
 			rules = append(rules, rule)
 
-			childRules := getRules(child)
+			childRules := compileChildren(child, rule)
 			for _, childRule := range childRules {
 				rules = append(rules, childRule)
 			}
-		} else {
-			// ...
+		} else if parent != nil {
+			// Definitions
+			parent.Statements = append(parent.Statements, child.Line)
 		}
 	}
 
 	return rules
+}
+
+// compileStatement compiles a Scarlet statement to CSS.
+func compileStatement(statement string) string {
+	space := strings.IndexByte(statement, ' ')
+
+	if space == -1 {
+		panic("Invalid statement: " + statement)
+	}
+
+	return statement[:space] + ":" + statement[space:] + ";"
 }

@@ -8,7 +8,7 @@ import (
 
 func TestCompiler(t *testing.T) {
 	styl, _ := ioutil.ReadFile("test.styl")
-	css := Compile(string(styl))
+	css, _ := Compile(string(styl))
 
 	fmt.Println(css)
 }
