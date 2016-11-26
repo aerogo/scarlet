@@ -47,17 +47,24 @@ func compileChildren(node *codetree.CodeTree, parent *CSSRule) []*CSSRule {
 
 	for _, child := range node.Children {
 		if len(child.Children) > 0 {
-			// Child rule
-			rule := &CSSRule{
-				Selector: child.Line,
-				Parent:   parent,
-			}
+			// This isn't 100% correct but works for now, hacky solution.
+			selectors := strings.Split(child.Line, ",")
 
-			rules = append(rules, rule)
+			for _, selector := range selectors {
+				selector = strings.TrimSpace(selector)
 
-			childRules := compileChildren(child, rule)
-			for _, childRule := range childRules {
-				rules = append(rules, childRule)
+				// Child rule
+				rule := &CSSRule{
+					Selector: selector,
+					Parent:   parent,
+				}
+
+				rules = append(rules, rule)
+
+				childRules := compileChildren(child, rule)
+				for _, childRule := range childRules {
+					rules = append(rules, childRule)
+				}
 			}
 		} else if parent != nil {
 			// Comments
@@ -65,7 +72,7 @@ func compileChildren(node *codetree.CodeTree, parent *CSSRule) []*CSSRule {
 				continue
 			}
 
-			// Definitions
+			// Statements
 			parent.Statements = append(parent.Statements, child.Line)
 		}
 	}
