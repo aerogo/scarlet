@@ -1,10 +1,21 @@
+// Main stylesheet
+
 body
 	color white
 	background-color rgb(32, 32, 32)
 
 a
+	color blue
+	
+	// Link hover
 	:hover
 		color yellow
+		div
+			width 100%
+			img
+				height 100%
+	
+	// Link active
 	:active
 		color pink
 
@@ -19,6 +30,8 @@ a
 	[aria-class="button"]
 		color green
 
-a, p
+div, p
 	:hover
 		color orange
+	span, address
+		display none

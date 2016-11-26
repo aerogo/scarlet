@@ -1,6 +1,7 @@
 package scarlet
 
 import (
+	"bytes"
 	"strings"
 
 	"github.com/aerogo/codetree"
@@ -13,9 +14,35 @@ type CSSRule struct {
 	Parent     *CSSRule
 }
 
+// SelectorPath returns the selector string for the parent node (recursive, returns absolute path).
+func (rule *CSSRule) SelectorPath() string {
+	if rule.Parent == nil {
+		return rule.Selector
+	}
+
+	// Parent path
+	var fullPath bytes.Buffer
+	fullPath.WriteString(rule.Parent.SelectorPath())
+
+	// Whitespace if needed
+	if !strings.HasPrefix(rule.Selector, ":") && !strings.HasPrefix(rule.Selector, "[") {
+		fullPath.WriteString(" ")
+	}
+
+	// The node's selector
+	fullPath.WriteString(rule.Selector)
+
+	return fullPath.String()
+}
+
 // compileChildren returns the CSS rules for a given code tree.
 // It iterates over the child nodes and finds the CSS rules.
 func compileChildren(node *codetree.CodeTree, parent *CSSRule) []*CSSRule {
+	// Comments
+	if strings.HasPrefix(node.Line, "//") {
+		return nil
+	}
+
 	var rules []*CSSRule
 
 	for _, child := range node.Children {
@@ -33,6 +60,11 @@ func compileChildren(node *codetree.CodeTree, parent *CSSRule) []*CSSRule {
 				rules = append(rules, childRule)
 			}
 		} else if parent != nil {
+			// Comments
+			if strings.HasPrefix(child.Line, "//") {
+				continue
+			}
+
 			// Definitions
 			parent.Statements = append(parent.Statements, child.Line)
 		}

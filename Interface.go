@@ -22,15 +22,7 @@ func Compile(src string) (string, error) {
 			continue
 		}
 
-		if rule.Parent != nil {
-			output.WriteString(rule.Parent.Selector)
-
-			if !strings.HasPrefix(rule.Selector, ":") && !strings.HasPrefix(rule.Selector, "[") {
-				output.WriteString(" ")
-			}
-		}
-
-		output.WriteString(rule.Selector)
+		output.WriteString(rule.SelectorPath())
 		output.WriteString(" {\n")
 
 		for _, statement := range rule.Statements {
