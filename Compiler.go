@@ -1,39 +1,10 @@
 package scarlet
 
 import (
-	"bytes"
 	"strings"
 
 	"github.com/aerogo/codetree"
 )
-
-// CSSRule ...
-type CSSRule struct {
-	Selector   string
-	Statements []string
-	Parent     *CSSRule
-}
-
-// SelectorPath returns the selector string for the parent node (recursive, returns absolute path).
-func (rule *CSSRule) SelectorPath() string {
-	if rule.Parent == nil {
-		return rule.Selector
-	}
-
-	// Parent path
-	var fullPath bytes.Buffer
-	fullPath.WriteString(rule.Parent.SelectorPath())
-
-	// Whitespace if needed
-	if !strings.HasPrefix(rule.Selector, ":") && !strings.HasPrefix(rule.Selector, "[") {
-		fullPath.WriteString(" ")
-	}
-
-	// The node's selector
-	fullPath.WriteString(rule.Selector)
-
-	return fullPath.String()
-}
 
 // compileChildren returns the CSS rules for a given code tree.
 // It iterates over the child nodes and finds the CSS rules.
@@ -47,7 +18,8 @@ func compileChildren(node *codetree.CodeTree, parent *CSSRule) []*CSSRule {
 
 	for _, child := range node.Children {
 		if len(child.Children) > 0 {
-			// This isn't 100% correct but works for now, hacky solution.
+			// This isn't 100% correct but works in 99.9% of cases.
+			// TODO: Make this work for funky stuff like a[href$="a,b"]
 			selectors := strings.Split(child.Line, ",")
 
 			for _, selector := range selectors {
@@ -81,12 +53,21 @@ func compileChildren(node *codetree.CodeTree, parent *CSSRule) []*CSSRule {
 }
 
 // compileStatement compiles a Scarlet statement to CSS.
-func compileStatement(statement string) string {
+func compileStatement(statement string, pretty bool) string {
 	space := strings.IndexByte(statement, ' ')
 
 	if space == -1 {
 		panic("Invalid statement: " + statement)
 	}
 
-	return statement[:space] + ":" + statement[space:] + ";"
+	value := statement[space:]
+
+	if !pretty {
+		value = strings.TrimSpace(value)
+	}
+
+	// Optimize color values
+	value = optimizeColors(value)
+
+	return statement[:space] + ":" + value + ";"
 }
