@@ -16,7 +16,12 @@ func colorComponentToFloat(value string) float64 {
 		return normalized
 	}
 
-	asByte, _ := strconv.Atoi(value)
+	asByte, err := strconv.Atoi(value)
+
+	if err != nil {
+		panic("Invalid RGB color value: " + value)
+	}
+
 	return float64(asByte) / 255.0
 }
 
