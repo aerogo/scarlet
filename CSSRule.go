@@ -13,7 +13,7 @@ import (
 // CSSRule ...
 type CSSRule struct {
 	Selector   string
-	Statements []string
+	Statements []*CSSStatement
 	Duplicates []*CSSRule
 	Parent     *CSSRule
 }
@@ -33,7 +33,7 @@ func (rule *CSSRule) SelectorPath(pretty bool) string {
 		if unicode.IsLetter(firstChar) {
 			fullPath.WriteString(" ")
 			fullPath.WriteString(rule.Selector)
-		} else if firstChar == '<' {
+		} else if firstChar == '>' {
 			if pretty {
 				fullPath.WriteString(" ")
 				fullPath.WriteString(rule.Selector)
@@ -52,12 +52,13 @@ func (rule *CSSRule) SelectorPath(pretty bool) string {
 
 // StatementsHash returns a hash of all the statements which is used to find duplicate CSS rules.
 func (rule *CSSRule) StatementsHash() string {
-	sort.Strings(rule.Statements)
+	sort.Sort(byProperty(rule.Statements))
 
 	hash := xxhash.NewS64(0)
 
 	for _, statement := range rule.Statements {
-		hash.WriteString(statement)
+		hash.WriteString(statement.Property)
+		hash.WriteString(statement.Value)
 	}
 
 	return strconv.FormatUint(hash.Sum64(), 16)

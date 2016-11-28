@@ -11,12 +11,12 @@ import (
 )
 
 func TestCompiler(t *testing.T) {
-	styl, _ := ioutil.ReadFile("test.styl")
-	css, _ := Compile(string(styl), true)
+	code, _ := ioutil.ReadFile("test.scarlet")
+	css, _ := Compile(string(code), true)
 	fmt.Println(css)
 
 	start := time.Now()
-	css, _ = Compile(string(styl), false)
+	css, _ = Compile(string(code), false)
 	elapsed := time.Since(start)
 
 	fmt.Println(strings.Repeat("-", 80))

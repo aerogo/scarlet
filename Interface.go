@@ -16,7 +16,8 @@ func Compile(src string, pretty bool) (string, error) {
 	}
 
 	var output bytes.Buffer
-	rules := compileChildren(tree, nil)
+	state := NewState()
+	rules := compileChildren(tree, nil, state)
 	rules = combineDuplicates(rules)
 
 	for _, rule := range rules {
@@ -53,14 +54,19 @@ func Compile(src string, pretty bool) (string, error) {
 				output.WriteString("\t")
 			}
 
-			statement := compileStatement(statement, pretty)
+			output.WriteString(statement.Property)
+			output.WriteString(":")
 
-			// Remove last semicolon
-			if index == len(rule.Statements)-1 && !pretty {
-				statement = statement[:len(statement)-1]
+			if pretty {
+				output.WriteString(" ")
 			}
 
-			output.WriteString(statement)
+			output.WriteString(statement.Value)
+
+			// Remove last semicolon
+			if pretty || index != len(rule.Statements)-1 {
+				output.WriteString(";")
+			}
 
 			if pretty {
 				output.WriteString("\n")

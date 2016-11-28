@@ -8,13 +8,13 @@ import (
 
 // compileChildren returns the CSS rules for a given code tree.
 // It iterates over the child nodes and finds the CSS rules.
-func compileChildren(node *codetree.CodeTree, parent *CSSRule) []*CSSRule {
+func compileChildren(node *codetree.CodeTree, parent *CSSRule, state *State) []*CSSRule {
 	// Comments
 	if strings.HasPrefix(node.Line, "//") {
 		return nil
 	}
 
-	var rules []*CSSRule
+	rules := []*CSSRule{}
 
 	for _, child := range node.Children {
 		if len(child.Children) > 0 {
@@ -33,19 +33,31 @@ func compileChildren(node *codetree.CodeTree, parent *CSSRule) []*CSSRule {
 
 				rules = append(rules, rule)
 
-				childRules := compileChildren(child, rule)
+				childRules := compileChildren(child, rule, state)
 				for _, childRule := range childRules {
 					rules = append(rules, childRule)
 				}
 			}
-		} else if parent != nil {
+		} else {
 			// Comments
 			if strings.HasPrefix(child.Line, "//") {
 				continue
 			}
 
-			// Statements
-			parent.Statements = append(parent.Statements, child.Line)
+			equal := strings.IndexByte(child.Line, '=')
+
+			if equal != -1 {
+				// Variables
+				name := strings.TrimSpace(child.Line[:equal])
+				value := strings.TrimSpace(child.Line[equal+1:])
+				state.Variables[name] = value
+			} else if parent != nil {
+				// Statements
+				statement := compileStatement(child.Line, state)
+				parent.Statements = append(parent.Statements, statement)
+			} else {
+				panic("Invalid statement: " + child.Line)
+			}
 		}
 	}
 
@@ -53,21 +65,20 @@ func compileChildren(node *codetree.CodeTree, parent *CSSRule) []*CSSRule {
 }
 
 // compileStatement compiles a Scarlet statement to CSS.
-func compileStatement(statement string, pretty bool) string {
+func compileStatement(statement string, state *State) *CSSStatement {
 	space := strings.IndexByte(statement, ' ')
 
 	if space == -1 {
 		panic("Invalid statement: " + statement)
 	}
 
-	value := statement[space:]
-
-	if !pretty {
-		value = strings.TrimSpace(value)
-	}
+	value := strings.TrimSpace(statement[space:])
 
 	// Optimize color values
 	value = optimizeColors(value)
 
-	return statement[:space] + ":" + value + ";"
+	return &CSSStatement{
+		Property: statement[:space],
+		Value:    value,
+	}
 }

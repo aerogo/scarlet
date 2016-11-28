@@ -1,13 +1,21 @@
-// Main stylesheet
+// Variables
+text-color = blue
 
+// Variable usage
 body
+	color text-color
+	background-color rgb(32, 32, 32)
+
+// This should be combined with the previous body definition
+p
 	color blue
 	background-color rgb(32, 32, 32)
 
+// Nesting
 a
-	color blue
+	color red
 	
-	// Link hover
+	// Comment inside a rule
 	:hover
 		color blue
 		div
@@ -15,25 +23,25 @@ a
 			img
 				height 100%
 	
-	// Link active
+	// Another comment
 	:active
 		color blue
 
+// Different types of selectors
 #content
 	color black
 	:hover
 		color red
 	> div
-		background white
 		color blue
 	img
 		border none
 	[aria-class="button"]
 		color green
 
+// Multi-selectors
 div, p
 	:hover
-		color blue
-		background white
+		color white
 	span, address
 		display none
