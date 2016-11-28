@@ -1,5 +1,6 @@
 // Variables
 text-color = blue
+gradient = linear-gradient(to bottom, 0% text-color, 100% text-color)
 
 // Variable usage
 body
@@ -45,3 +46,8 @@ div, p
 		color white
 	span, address
 		display none
+
+// Over multiple lines
+h1,
+h2
+	display none

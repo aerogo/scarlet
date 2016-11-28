@@ -5,7 +5,6 @@ import (
 	"sort"
 	"strconv"
 	"strings"
-	"unicode"
 
 	"github.com/OneOfOne/xxhash"
 )
@@ -30,17 +29,29 @@ func (rule *CSSRule) SelectorPath(pretty bool) string {
 
 	// Whitespace if needed
 	for _, firstChar := range rule.Selector {
-		if unicode.IsLetter(firstChar) {
+		// Sub-elements always have a whitespace
+		switch firstChar {
+		case '|':
 			fullPath.WriteString(" ")
+			fullPath.WriteString(rule.Selector[1:])
+
+		case '&':
+			fullPath.WriteString(rule.Selector[1:])
+
+		case ':':
 			fullPath.WriteString(rule.Selector)
-		} else if firstChar == '>' {
+
+		case '>':
 			if pretty {
 				fullPath.WriteString(" ")
 				fullPath.WriteString(rule.Selector)
 			} else {
-				fullPath.WriteString(strings.Replace(rule.Selector, "< ", "<", 1))
+				fullPath.WriteString("<")
+				fullPath.WriteString(strings.TrimSpace(rule.Selector[1:]))
 			}
-		} else {
+
+		default:
+			fullPath.WriteString(" ")
 			fullPath.WriteString(rule.Selector)
 		}
 

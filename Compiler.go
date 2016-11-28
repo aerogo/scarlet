@@ -3,6 +3,9 @@ package scarlet
 import (
 	"bytes"
 	"strings"
+	"unicode/utf8"
+
+	"unicode"
 
 	"github.com/aerogo/codetree"
 )
@@ -16,12 +19,17 @@ func compileChildren(node *codetree.CodeTree, parent *CSSRule, state *State) []*
 	}
 
 	rules := []*CSSRule{}
+	selectorsOnPreviousLines := []string{}
 
 	for _, child := range node.Children {
 		if len(child.Children) > 0 {
 			// This isn't 100% correct but works in 99.9% of cases.
 			// TODO: Make this work for funky stuff like a[href$="a,b"]
 			selectors := strings.Split(child.Line, ",")
+
+			// Append selectors from previous lines
+			selectors = append(selectors, selectorsOnPreviousLines...)
+			selectorsOnPreviousLines = selectorsOnPreviousLines[:0]
 
 			for _, selector := range selectors {
 				selector = strings.TrimSpace(selector)
@@ -42,6 +50,12 @@ func compileChildren(node *codetree.CodeTree, parent *CSSRule, state *State) []*
 		} else {
 			// Comments
 			if strings.HasPrefix(child.Line, "//") {
+				continue
+			}
+
+			// Selector on previous line
+			if strings.HasSuffix(child.Line, ",") {
+				selectorsOnPreviousLines = append(selectorsOnPreviousLines, child.Line[:len(child.Line)-1])
 				continue
 			}
 
@@ -87,26 +101,36 @@ func compileStatement(statement string, state *State) *CSSStatement {
 
 // insertVariableValues
 func insertVariableValues(expression string, state *State) string {
+	// EOF
 	expression += " "
+
 	var buffer bytes.Buffer
 
+	ignore := ignoreReader{}
+
 	cursor := 0
+
 	for index, char := range expression {
-		if char == ' ' {
-			token := expression[cursor:index]
-			value, exists := state.Variables[token]
+		if ignore.canIgnore(char) {
+			buffer.WriteRune(char)
+			cursor = index + utf8.RuneLen(char)
+			continue
+		}
 
-			if exists {
-				buffer.WriteString(value)
-			} else {
-				buffer.WriteString(token)
+		if char != '-' && (unicode.IsSpace(char) || unicode.IsPunct(char)) {
+			if index != cursor {
+				token := expression[cursor:index]
+				value, exists := state.Variables[token]
+
+				if exists {
+					buffer.WriteString(value)
+				} else {
+					buffer.WriteString(token)
+				}
 			}
 
-			if index != len(expression)-1 {
-				buffer.WriteByte(' ')
-			}
-
-			cursor = index + 1
+			buffer.WriteRune(char)
+			cursor = index + utf8.RuneLen(char)
 		}
 	}
 

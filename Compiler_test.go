@@ -27,3 +27,13 @@ func TestCompiler(t *testing.T) {
 	fmt.Println("Size: ", color.YellowString("%d", len(css)))
 	fmt.Println("Time: ", color.GreenString("%v", elapsed))
 }
+
+func TestVariableInsertion(t *testing.T) {
+	state := NewState()
+	state.Variables["bg-color"] = "red"
+
+	src := "linear-gradient(to bottom, 0% bg-color, 100% bg-color) 'bg-color'"
+
+	fmt.Println(src)
+	fmt.Println(insertVariableValues(src, state))
+}
