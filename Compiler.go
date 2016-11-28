@@ -1,6 +1,7 @@
 package scarlet
 
 import (
+	"bytes"
 	"strings"
 
 	"github.com/aerogo/codetree"
@@ -75,10 +76,39 @@ func compileStatement(statement string, state *State) *CSSStatement {
 	value := strings.TrimSpace(statement[space:])
 
 	// Optimize color values
+	value = insertVariableValues(value, state)
 	value = optimizeColors(value)
 
 	return &CSSStatement{
 		Property: statement[:space],
 		Value:    value,
 	}
+}
+
+// insertVariableValues
+func insertVariableValues(expression string, state *State) string {
+	expression += " "
+	var buffer bytes.Buffer
+
+	cursor := 0
+	for index, char := range expression {
+		if char == ' ' {
+			token := expression[cursor:index]
+			value, exists := state.Variables[token]
+
+			if exists {
+				buffer.WriteString(value)
+			} else {
+				buffer.WriteString(token)
+			}
+
+			if index != len(expression)-1 {
+				buffer.WriteByte(' ')
+			}
+
+			cursor = index + 1
+		}
+	}
+
+	return buffer.String()
 }
