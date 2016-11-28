@@ -3,7 +3,6 @@ package scarlet
 import (
 	"bytes"
 	"strings"
-	"unicode/utf8"
 
 	"unicode"
 
@@ -102,24 +101,21 @@ func compileStatement(statement string, state *State) *CSSStatement {
 // insertVariableValues
 func insertVariableValues(expression string, state *State) string {
 	// EOF
-	expression += " "
-
-	var buffer bytes.Buffer
-
+	runes := append([]rune(expression), ' ')
+	buffer := bytes.Buffer{}
 	ignore := ignoreReader{}
-
 	cursor := 0
 
-	for index, char := range expression {
+	for index, char := range runes {
 		if ignore.canIgnore(char) {
 			buffer.WriteRune(char)
-			cursor = index + utf8.RuneLen(char)
+			cursor = index + 1
 			continue
 		}
 
 		if char != '-' && (unicode.IsSpace(char) || unicode.IsPunct(char)) {
 			if index != cursor {
-				token := expression[cursor:index]
+				token := string(runes[cursor:index])
 				value, exists := state.Variables[token]
 
 				if exists {
@@ -129,8 +125,12 @@ func insertVariableValues(expression string, state *State) string {
 				}
 			}
 
+			if index == len(runes)-1 {
+				break
+			}
+
 			buffer.WriteRune(char)
-			cursor = index + utf8.RuneLen(char)
+			cursor = index + 1
 		}
 	}
 
