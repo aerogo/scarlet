@@ -12,13 +12,27 @@ func (mixin *Mixin) Apply(parent *CSSRule) []*CSSRule {
 
 	rules := []*CSSRule{}
 
+	// Deep copy every rule
 	for _, rule := range mixin.Rules {
-		cpy := &CSSRule{
-			Selector:   rule.Selector,
-			Statements: rule.Statements,
-			Parent:     parent,
+		var previous *CSSRule
+
+		for {
+			cpy := rule.Copy()
+
+			if previous != nil {
+				previous.Parent = cpy
+			} else {
+				rules = append(rules, cpy)
+			}
+
+			if cpy.Parent == mixin.Root {
+				cpy.Parent = parent
+				break
+			}
+
+			previous = cpy
+			rule = cpy.Parent
 		}
-		rules = append(rules, cpy)
 	}
 
 	return rules

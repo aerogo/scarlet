@@ -1,0 +1,62 @@
+// Variables
+text-color = blue
+text-hover-color = text-color
+gradient = linear-gradient(to bottom, 0% text-color, 100% text-color)
+
+// Mixins
+mixin horizontal
+	display flex
+	flex-direction row
+
+mixin on-hover
+	:hover
+		color text-hover-color
+		div
+			width 100%
+			img
+				height 100%
+
+// Variable usage
+body
+	horizontal
+	color text-color
+	background-color rgb(32, 32, 32)
+
+// This should be combined with the previous body definition
+p
+	horizontal
+	color blue
+	background-color rgb(32, 32, 32)
+
+// Nesting
+a
+	color red
+	on-hover
+	
+	// Another comment
+	:active
+		color blue
+
+// Different types of selectors
+#content
+	color black
+	:hover
+		color red
+	> div
+		color blue
+	img
+		border none
+	[aria-class="button"]
+		color green
+
+// Multi-selectors
+div, p
+	:hover
+		color white
+	span, address
+		display none
+
+// Over multiple lines
+h1,
+h2
+	display none

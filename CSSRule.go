@@ -17,6 +17,30 @@ type CSSRule struct {
 	Parent     *CSSRule
 }
 
+// Root ...
+func (rule *CSSRule) Root() *CSSRule {
+	parent := rule
+
+	for {
+		nextParent := parent.Parent
+
+		if nextParent == nil {
+			return parent
+		}
+
+		parent = nextParent
+	}
+}
+
+// Copy ...
+func (rule *CSSRule) Copy() *CSSRule {
+	return &CSSRule{
+		Selector:   rule.Selector,
+		Statements: rule.Statements,
+		Parent:     rule.Parent,
+	}
+}
+
 // SelectorPath returns the selector string for the rule (recursive, returns absolute path).
 func (rule *CSSRule) SelectorPath(pretty bool) string {
 	if rule.Parent == nil {
