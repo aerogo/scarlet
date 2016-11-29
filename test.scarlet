@@ -1,5 +1,6 @@
 // Variables
 text-color = blue
+text-hover-color = text-color
 gradient = linear-gradient(to bottom, 0% text-color, 100% text-color)
 
 // Mixins
@@ -27,7 +28,7 @@ a
 	
 	// Comment inside a rule
 	:hover
-		color blue
+		color text-hover-color
 		div
 			width 100%
 			img

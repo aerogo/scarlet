@@ -80,6 +80,7 @@ func compileChildren(node *codetree.CodeTree, parent *CSSRule, state *State) []*
 				// Variables
 				name := strings.TrimSpace(child.Line[:equal])
 				value := strings.TrimSpace(child.Line[equal+1:])
+				value = insertVariableValues(value, state)
 				state.Variables[name] = value
 			} else if parent != nil && strings.IndexByte(child.Line, ' ') != -1 {
 				// Statements
