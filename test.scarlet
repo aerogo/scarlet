@@ -2,13 +2,22 @@
 text-color = blue
 gradient = linear-gradient(to bottom, 0% text-color, 100% text-color)
 
+// Mixins
+mixin horizontal
+	display flex
+	flex-direction row
+	:hover
+		background-color pink
+
 // Variable usage
 body
+	horizontal
 	color text-color
 	background-color rgb(32, 32, 32)
 
 // This should be combined with the previous body definition
 p
+	horizontal
 	color blue
 	background-color rgb(32, 32, 32)
 
