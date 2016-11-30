@@ -17,6 +17,67 @@ type CSSRule struct {
 	Parent     *CSSRule
 }
 
+// Render renders the CSS rule into the output stream.
+func (rule *CSSRule) Render(output *bytes.Buffer, pretty bool) {
+	if len(rule.Statements) == 0 {
+		return
+	}
+
+	output.WriteString(rule.SelectorPath(pretty))
+
+	if len(rule.Duplicates) > 0 {
+		for _, duplicate := range rule.Duplicates {
+			output.WriteString(",")
+
+			if pretty {
+				output.WriteString(" ")
+			}
+
+			output.WriteString(duplicate.SelectorPath(pretty))
+		}
+	}
+
+	if pretty {
+		output.WriteString(" ")
+	}
+
+	output.WriteString("{")
+
+	if pretty {
+		output.WriteString("\n")
+	}
+
+	for index, statement := range rule.Statements {
+		if pretty {
+			output.WriteString("\t")
+		}
+
+		output.WriteString(statement.Property)
+		output.WriteString(":")
+
+		if pretty {
+			output.WriteString(" ")
+		}
+
+		output.WriteString(statement.Value)
+
+		// Remove last semicolon
+		if pretty || index != len(rule.Statements)-1 {
+			output.WriteString(";")
+		}
+
+		if pretty {
+			output.WriteString("\n")
+		}
+	}
+
+	output.WriteString("}")
+
+	if pretty {
+		output.WriteString("\n\n")
+	}
+}
+
 // Root ...
 func (rule *CSSRule) Root() *CSSRule {
 	parent := rule

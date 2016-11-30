@@ -10,3 +10,8 @@ a
 
 p
 	on-hover
+
+// @media (min-width: 900px)
+> 900px width
+	p
+		display flex

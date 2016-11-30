@@ -15,69 +15,22 @@ func Compile(src string, pretty bool) (string, error) {
 		return "", err
 	}
 
-	var output bytes.Buffer
+	output := new(bytes.Buffer)
 	state := NewState()
-	rules := compileChildren(tree, nil, state)
+
+	// Parse it
+	rules, mediaGroups := compileChildren(tree, nil, state)
+
+	// Combine duplicate rules
 	rules = combineDuplicates(rules)
 
+	// Render to output
 	for _, rule := range rules {
-		if len(rule.Statements) == 0 {
-			continue
-		}
+		rule.Render(output, pretty)
+	}
 
-		output.WriteString(rule.SelectorPath(pretty))
-
-		if len(rule.Duplicates) > 0 {
-			for _, duplicate := range rule.Duplicates {
-				output.WriteString(",")
-
-				if pretty {
-					output.WriteString(" ")
-				}
-
-				output.WriteString(duplicate.SelectorPath(pretty))
-			}
-		}
-
-		if pretty {
-			output.WriteString(" ")
-		}
-
-		output.WriteString("{")
-
-		if pretty {
-			output.WriteString("\n")
-		}
-
-		for index, statement := range rule.Statements {
-			if pretty {
-				output.WriteString("\t")
-			}
-
-			output.WriteString(statement.Property)
-			output.WriteString(":")
-
-			if pretty {
-				output.WriteString(" ")
-			}
-
-			output.WriteString(statement.Value)
-
-			// Remove last semicolon
-			if pretty || index != len(rule.Statements)-1 {
-				output.WriteString(";")
-			}
-
-			if pretty {
-				output.WriteString("\n")
-			}
-		}
-
-		output.WriteString("}")
-
-		if pretty {
-			output.WriteString("\n\n")
-		}
+	for _, mediaGroup := range mediaGroups {
+		mediaGroup.Render(output, pretty)
 	}
 
 	return strings.TrimRight(output.String(), "\n"), nil

@@ -11,13 +11,14 @@ import (
 
 // compileChildren returns the CSS rules for a given code tree.
 // It iterates over the child nodes and finds the CSS rules.
-func compileChildren(node *codetree.CodeTree, parent *CSSRule, state *State) []*CSSRule {
+func compileChildren(node *codetree.CodeTree, parent *CSSRule, state *State) ([]*CSSRule, []*MediaGroup) {
 	// Comments
 	if strings.HasPrefix(node.Line, "//") {
-		return nil
+		return nil, nil
 	}
 
 	rules := []*CSSRule{}
+	mediaGroups := []*MediaGroup{}
 	selectorsOnPreviousLines := []string{}
 
 	for _, child := range node.Children {
@@ -31,12 +32,32 @@ func compileChildren(node *codetree.CodeTree, parent *CSSRule, state *State) []*
 					Rules: []*CSSRule{},
 				}
 
-				childRules := compileChildren(child, mixin.Root, state)
+				childRules, _ := compileChildren(child, mixin.Root, state)
 				for _, childRule := range childRules {
 					mixin.Rules = append(mixin.Rules, childRule)
 				}
 
 				state.Mixins[name] = mixin
+				continue
+			}
+
+			// Media query
+			if strings.HasPrefix(child.Line, "< ") || strings.HasPrefix(child.Line, "> ") {
+				media := &MediaGroup{}
+				parts := strings.Split(child.Line, " ")
+
+				media.Operator = parts[0]
+				media.Size = parts[1]
+
+				if len(parts) >= 3 {
+					media.Property = parts[2]
+				} else {
+					media.Property = "width"
+				}
+
+				media.Rules, _ = compileChildren(child, nil, state)
+
+				mediaGroups = append(mediaGroups, media)
 				continue
 			}
 
@@ -59,7 +80,7 @@ func compileChildren(node *codetree.CodeTree, parent *CSSRule, state *State) []*
 
 				rules = append(rules, rule)
 
-				childRules := compileChildren(child, rule, state)
+				childRules, _ := compileChildren(child, rule, state)
 				rules = append(rules, childRules...)
 			}
 		} else {
@@ -87,6 +108,7 @@ func compileChildren(node *codetree.CodeTree, parent *CSSRule, state *State) []*
 				statement := compileStatement(child.Line, state)
 				parent.Statements = append(parent.Statements, statement)
 			} else {
+				// Mixin calls
 				mixin, exists := state.Mixins[child.Line]
 
 				if exists && parent != nil {
@@ -99,7 +121,7 @@ func compileChildren(node *codetree.CodeTree, parent *CSSRule, state *State) []*
 		}
 	}
 
-	return rules
+	return rules, mediaGroups
 }
 
 // compileStatement compiles a Scarlet statement to CSS.
