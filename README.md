@@ -1,2 +1,4 @@
 # scarlet
-Generates CSS from Stylus files.
+Generates CSS from `.scarlet` files.
+
+```
