@@ -11,14 +11,15 @@ import (
 
 // compileChildren returns the CSS rules for a given code tree.
 // It iterates over the child nodes and finds the CSS rules.
-func compileChildren(node *codetree.CodeTree, parent *CSSRule, state *State) ([]*CSSRule, []*MediaGroup) {
+func compileChildren(node *codetree.CodeTree, parent *CSSRule, state *State) ([]*CSSRule, []*MediaGroup, []*Animation) {
 	// Comments
 	if strings.HasPrefix(node.Line, "//") {
-		return nil, nil
+		return nil, nil, nil
 	}
 
 	rules := []*CSSRule{}
 	mediaGroups := []*MediaGroup{}
+	animations := []*Animation{}
 	selectorsOnPreviousLines := []string{}
 
 	for _, child := range node.Children {
@@ -32,7 +33,7 @@ func compileChildren(node *codetree.CodeTree, parent *CSSRule, state *State) ([]
 					Rules: []*CSSRule{},
 				}
 
-				childRules, _ := compileChildren(child, mixin.Root, state)
+				childRules, _, _ := compileChildren(child, mixin.Root, state)
 				for _, childRule := range childRules {
 					mixin.Rules = append(mixin.Rules, childRule)
 				}
@@ -55,9 +56,21 @@ func compileChildren(node *codetree.CodeTree, parent *CSSRule, state *State) ([]
 					media.Property = "width"
 				}
 
-				media.Rules, _ = compileChildren(child, nil, state)
+				media.Rules, _, _ = compileChildren(child, nil, state)
 
 				mediaGroups = append(mediaGroups, media)
+				continue
+			}
+
+			// Animation
+			if strings.HasPrefix(child.Line, "animation ") {
+				anim := &Animation{
+					Name: child.Line[len("animation "):],
+				}
+
+				anim.Keyframes, _, _ = compileChildren(child, nil, state)
+
+				animations = append(animations, anim)
 				continue
 			}
 
@@ -80,7 +93,7 @@ func compileChildren(node *codetree.CodeTree, parent *CSSRule, state *State) ([]
 
 				rules = append(rules, rule)
 
-				childRules, _ := compileChildren(child, rule, state)
+				childRules, _, _ := compileChildren(child, rule, state)
 				rules = append(rules, childRules...)
 			}
 		} else {
@@ -121,7 +134,7 @@ func compileChildren(node *codetree.CodeTree, parent *CSSRule, state *State) ([]
 		}
 	}
 
-	return rules, mediaGroups
+	return rules, mediaGroups, animations
 }
 
 // compileStatement compiles a Scarlet statement to CSS.

@@ -11,7 +11,7 @@ import (
 )
 
 func TestCompiler(t *testing.T) {
-	code, _ := ioutil.ReadFile("test.scarlet")
+	code, _ := ioutil.ReadFile("test/test.scarlet")
 
 	start := time.Now()
 	css, _ := Compile(string(code), true)

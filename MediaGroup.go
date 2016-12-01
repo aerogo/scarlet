@@ -10,7 +10,7 @@ type MediaGroup struct {
 	Rules    []*CSSRule
 }
 
-// Render renders the media group into the output stream.
+// Render renders the media group to the output stream.
 func (media *MediaGroup) Render(output *bytes.Buffer, pretty bool) {
 	output.WriteString("@media all and (")
 

@@ -12,6 +12,14 @@ p
 	on-hover
 
 // @media (min-width: 900px)
-> 900px width
+> 900px
 	p
 		display flex
+		// appear(4s)
+		animation-name appear
+
+animation appear
+	0%
+		opacity 0
+	100%
+		opacity 1

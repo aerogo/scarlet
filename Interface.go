@@ -19,7 +19,7 @@ func Compile(src string, pretty bool) (string, error) {
 	state := NewState()
 
 	// Parse it
-	rules, mediaGroups := compileChildren(tree, nil, state)
+	rules, mediaGroups, animations := compileChildren(tree, nil, state)
 
 	// Combine duplicate rules
 	rules = combineDuplicates(rules)
@@ -27,6 +27,10 @@ func Compile(src string, pretty bool) (string, error) {
 	// Render to output
 	for _, rule := range rules {
 		rule.Render(output, pretty)
+	}
+
+	for _, animation := range animations {
+		animation.Render(output, pretty)
 	}
 
 	for _, mediaGroup := range mediaGroups {
