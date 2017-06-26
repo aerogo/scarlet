@@ -123,6 +123,9 @@ func (rule *CSSRule) SelectorPath(pretty bool) string {
 		case '&':
 			fullPath.WriteString(rule.Selector[1:])
 
+		case '[':
+			fullPath.WriteString(rule.Selector)
+
 		case ':':
 			fullPath.WriteString(rule.Selector)
 
