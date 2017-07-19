@@ -19,7 +19,7 @@ func Compile(src string, pretty bool) (string, error) {
 	state := NewState()
 
 	// Parse it
-	rules, mediaGroups, animations := compileChildren(tree, nil, state)
+	rules, mediaGroups, mediaQueries, animations := compileChildren(tree, nil, state)
 
 	// Combine duplicate rules
 	rules = combineDuplicates(rules)
@@ -35,6 +35,10 @@ func Compile(src string, pretty bool) (string, error) {
 
 	for _, mediaGroup := range mediaGroups {
 		mediaGroup.Render(output, pretty)
+	}
+
+	for _, mediaQuery := range mediaQueries {
+		mediaQuery.Render(output, pretty)
 	}
 
 	return strings.TrimRight(output.String(), "\n"), nil

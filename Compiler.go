@@ -11,14 +11,15 @@ import (
 
 // compileChildren returns the CSS rules for a given code tree.
 // It iterates over the child nodes and finds the CSS rules.
-func compileChildren(node *codetree.CodeTree, parent *CSSRule, state *State) ([]*CSSRule, []*MediaGroup, []*Animation) {
+func compileChildren(node *codetree.CodeTree, parent *CSSRule, state *State) ([]*CSSRule, []*MediaGroup, []*MediaQuery, []*Animation) {
 	// Comments
 	if strings.HasPrefix(node.Line, "//") {
-		return nil, nil, nil
+		return nil, nil, nil, nil
 	}
 
 	rules := []*CSSRule{}
 	mediaGroups := []*MediaGroup{}
+	mediaQueries := []*MediaQuery{}
 	animations := []*Animation{}
 	selectorsOnPreviousLines := []string{}
 
@@ -33,7 +34,7 @@ func compileChildren(node *codetree.CodeTree, parent *CSSRule, state *State) ([]
 					Rules: []*CSSRule{},
 				}
 
-				childRules, _, _ := compileChildren(child, mixin.Root, state)
+				childRules, _, _, _ := compileChildren(child, mixin.Root, state)
 				for _, childRule := range childRules {
 					mixin.Rules = append(mixin.Rules, childRule)
 				}
@@ -43,6 +44,19 @@ func compileChildren(node *codetree.CodeTree, parent *CSSRule, state *State) ([]
 			}
 
 			// Media query
+			if strings.HasPrefix(child.Line, "@") {
+				selector := strings.TrimSpace(child.Line)
+
+				media := &MediaQuery{
+					Selector: selector,
+				}
+
+				media.Rules, _, _, _ = compileChildren(child, nil, state)
+				mediaQueries = append(mediaQueries, media)
+				continue
+			}
+
+			// Media query by size
 			if strings.HasPrefix(child.Line, "< ") || strings.HasPrefix(child.Line, "> ") {
 				media := &MediaGroup{}
 				parts := strings.Split(child.Line, " ")
@@ -56,8 +70,7 @@ func compileChildren(node *codetree.CodeTree, parent *CSSRule, state *State) ([]
 					media.Property = "width"
 				}
 
-				media.Rules, _, _ = compileChildren(child, nil, state)
-
+				media.Rules, _, _, _ = compileChildren(child, nil, state)
 				mediaGroups = append(mediaGroups, media)
 				continue
 			}
@@ -68,7 +81,7 @@ func compileChildren(node *codetree.CodeTree, parent *CSSRule, state *State) ([]
 					Name: child.Line[len("animation "):],
 				}
 
-				anim.Keyframes, _, _ = compileChildren(child, nil, state)
+				anim.Keyframes, _, _, _ = compileChildren(child, nil, state)
 
 				animations = append(animations, anim)
 				continue
@@ -93,7 +106,7 @@ func compileChildren(node *codetree.CodeTree, parent *CSSRule, state *State) ([]
 
 				rules = append(rules, rule)
 
-				childRules, _, _ := compileChildren(child, rule, state)
+				childRules, _, _, _ := compileChildren(child, rule, state)
 				rules = append(rules, childRules...)
 			}
 		} else {
@@ -134,7 +147,7 @@ func compileChildren(node *codetree.CodeTree, parent *CSSRule, state *State) ([]
 		}
 	}
 
-	return rules, mediaGroups, animations
+	return rules, mediaGroups, mediaQueries, animations
 }
 
 // compileStatement compiles a Scarlet statement to CSS.
