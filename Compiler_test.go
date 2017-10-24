@@ -1,4 +1,4 @@
-package scarlet
+package scarlet_test
 
 import (
 	"fmt"
@@ -7,14 +7,16 @@ import (
 	"testing"
 	"time"
 
+	"github.com/aerogo/scarlet"
 	"github.com/fatih/color"
 )
 
 func TestCompiler(t *testing.T) {
-	code, _ := ioutil.ReadFile("test/test.scarlet")
+	src, _ := ioutil.ReadFile("test/test.scarlet")
+	code := string(src)
 
 	start := time.Now()
-	css, _ := Compile(string(code), true)
+	css, _ := scarlet.Compile(code, true)
 	elapsed := time.Since(start)
 
 	fmt.Println(css)
@@ -25,12 +27,18 @@ func TestCompiler(t *testing.T) {
 	fmt.Println("Time: ", color.GreenString("%v", elapsed))
 }
 
-func TestVariableInsertion(t *testing.T) {
-	state := NewState()
-	state.Variables["bg-color"] = "red"
+func BenchmarkCompiler(b *testing.B) {
+	src, _ := ioutil.ReadFile("test/test.scarlet")
+	code := string(src)
 
-	src := "linear-gradient(to bottom, 0% bg-color, 100% bg-color) 'bg-color'"
+	b.ReportAllocs()
+	b.ResetTimer()
 
-	fmt.Println(src)
-	fmt.Println(insertVariableValues(src, state))
+	b.RunParallel(func(pb *testing.PB) {
+		for pb.Next() {
+			scarlet.Compile(code, false)
+		}
+	})
 }
+
+
