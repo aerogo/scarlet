@@ -151,7 +151,9 @@ func (rule *CSSRule) SelectorPath(pretty bool) string {
 
 // StatementsHash returns a hash of all the statements which is used to find duplicate CSS rules.
 func (rule *CSSRule) StatementsHash() string {
-	sort.Sort(byProperty(rule.Statements))
+	sort.Slice(rule.Statements, func(i, j int) bool {
+		return rule.Statements[i].Property < rule.Statements[j].Property
+	})
 
 	hash := xxhash.NewS64(0)
 

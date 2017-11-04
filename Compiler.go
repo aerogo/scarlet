@@ -17,99 +17,14 @@ func compileChildren(node *codetree.CodeTree, parent *CSSRule, state *State) ([]
 		return nil, nil, nil, nil
 	}
 
-	rules := []*CSSRule{}
-	mediaGroups := []*MediaGroup{}
-	mediaQueries := []*MediaQuery{}
-	animations := []*Animation{}
-	selectorsOnPreviousLines := []string{}
+	var rules []*CSSRule
+	var mediaGroups []*MediaGroup
+	var mediaQueries []*MediaQuery
+	var animations []*Animation
+	var selectorsOnPreviousLines []string
 
 	for _, child := range node.Children {
-		if len(child.Children) > 0 {
-			// Mixin
-			if strings.HasPrefix(child.Line, "mixin ") {
-				name := child.Line[len("mixin "):]
-
-				mixin := &Mixin{
-					Root:  &CSSRule{},
-					Rules: []*CSSRule{},
-				}
-
-				childRules, _, _, _ := compileChildren(child, mixin.Root, state)
-				for _, childRule := range childRules {
-					mixin.Rules = append(mixin.Rules, childRule)
-				}
-
-				state.Mixins[name] = mixin
-				continue
-			}
-
-			// Media query
-			if strings.HasPrefix(child.Line, "@") {
-				selector := strings.TrimSpace(child.Line)
-
-				media := &MediaQuery{
-					Selector: selector,
-				}
-
-				media.Rules, _, _, _ = compileChildren(child, nil, state)
-				mediaQueries = append(mediaQueries, media)
-				continue
-			}
-
-			// Media query by size
-			if strings.HasPrefix(child.Line, "< ") || strings.HasPrefix(child.Line, "> ") {
-				media := &MediaGroup{}
-				parts := strings.Split(child.Line, " ")
-
-				media.Operator = parts[0]
-				media.Size = parts[1]
-
-				if len(parts) >= 3 {
-					media.Property = parts[2]
-				} else {
-					media.Property = "width"
-				}
-
-				media.Rules, _, _, _ = compileChildren(child, nil, state)
-				mediaGroups = append(mediaGroups, media)
-				continue
-			}
-
-			// Animation
-			if strings.HasPrefix(child.Line, "animation ") {
-				anim := &Animation{
-					Name: child.Line[len("animation "):],
-				}
-
-				anim.Keyframes, _, _, _ = compileChildren(child, nil, state)
-
-				animations = append(animations, anim)
-				continue
-			}
-
-			// This isn't 100% correct but works in 99.9% of cases.
-			// TODO: Make this work for funky stuff like a[href$="a,b"]
-			selectors := strings.Split(child.Line, ",")
-
-			// Append selectors from previous lines
-			selectors = append(selectors, selectorsOnPreviousLines...)
-			selectorsOnPreviousLines = selectorsOnPreviousLines[:0]
-
-			for _, selector := range selectors {
-				selector = strings.TrimSpace(selector)
-
-				// Child rule
-				rule := &CSSRule{
-					Selector: selector,
-					Parent:   parent,
-				}
-
-				rules = append(rules, rule)
-
-				childRules, _, _, _ := compileChildren(child, rule, state)
-				rules = append(rules, childRules...)
-			}
-		} else {
+		if len(child.Children) == 0 {
 			// Comments
 			if strings.HasPrefix(child.Line, "//") {
 				continue
@@ -144,6 +59,91 @@ func compileChildren(node *codetree.CodeTree, parent *CSSRule, state *State) ([]
 					panic("Invalid statement: " + child.Line)
 				}
 			}
+		}
+
+		// Mixin
+		if strings.HasPrefix(child.Line, "mixin ") {
+			name := child.Line[len("mixin "):]
+
+			mixin := &Mixin{
+				Root:  &CSSRule{},
+				Rules: []*CSSRule{},
+			}
+
+			childRules, _, _, _ := compileChildren(child, mixin.Root, state)
+			for _, childRule := range childRules {
+				mixin.Rules = append(mixin.Rules, childRule)
+			}
+
+			state.Mixins[name] = mixin
+			continue
+		}
+
+		// Media query
+		if strings.HasPrefix(child.Line, "@") {
+			selector := strings.TrimSpace(child.Line)
+
+			media := &MediaQuery{
+				Selector: selector,
+			}
+
+			media.Rules, _, _, _ = compileChildren(child, nil, state)
+			mediaQueries = append(mediaQueries, media)
+			continue
+		}
+
+		// Media query by size
+		if strings.HasPrefix(child.Line, "< ") || strings.HasPrefix(child.Line, "> ") {
+			media := &MediaGroup{}
+			parts := strings.Split(child.Line, " ")
+
+			media.Operator = parts[0]
+			media.Size = parts[1]
+
+			if len(parts) >= 3 {
+				media.Property = parts[2]
+			} else {
+				media.Property = "width"
+			}
+
+			media.Rules, _, _, _ = compileChildren(child, nil, state)
+			mediaGroups = append(mediaGroups, media)
+			continue
+		}
+
+		// Animation
+		if strings.HasPrefix(child.Line, "animation ") {
+			anim := &Animation{
+				Name: child.Line[len("animation "):],
+			}
+
+			anim.Keyframes, _, _, _ = compileChildren(child, nil, state)
+
+			animations = append(animations, anim)
+			continue
+		}
+
+		// This isn't 100% correct but works in 99.9% of cases.
+		// TODO: Make this work for funky stuff like a[href$="a,b"]
+		selectors := strings.Split(child.Line, ",")
+
+		// Append selectors from previous lines
+		selectors = append(selectors, selectorsOnPreviousLines...)
+		selectorsOnPreviousLines = selectorsOnPreviousLines[:0]
+
+		for _, selector := range selectors {
+			selector = strings.TrimSpace(selector)
+
+			// Child rule
+			rule := &CSSRule{
+				Selector: selector,
+				Parent:   parent,
+			}
+
+			rules = append(rules, rule)
+
+			childRules, _, _, _ := compileChildren(child, rule, state)
+			rules = append(rules, childRules...)
 		}
 	}
 

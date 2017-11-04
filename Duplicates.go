@@ -13,11 +13,11 @@ func combineDuplicates(rules []*CSSRule) []*CSSRule {
 	for _, rule := range rules {
 		hash := rule.StatementsHash()
 
-		if duplicate, ok := seen[hash]; !ok {
+		if existing, ok := seen[hash]; !ok {
 			result = append(result, rule)
 			seen[hash] = rule
 		} else {
-			duplicate.Duplicates = append(duplicate.Duplicates, rule)
+			existing.Duplicates = append(existing.Duplicates, rule)
 		}
 	}
 
