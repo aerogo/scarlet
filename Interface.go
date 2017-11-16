@@ -25,6 +25,17 @@ func Compile(src string, pretty bool) (string, error) {
 	// Combine duplicate rules
 	rules = combineDuplicates(rules)
 
+	// CSS variables
+	output.WriteString(":root{")
+	for name, value := range state.Variables {
+		output.WriteString("--")
+		output.WriteString(name)
+		output.WriteByte(':')
+		output.WriteString(value)
+		output.WriteByte(';')
+	}
+	output.WriteString("}")
+
 	// Render to output
 	for _, rule := range rules {
 		rule.Render(output, pretty)

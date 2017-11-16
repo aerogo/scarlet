@@ -188,10 +188,12 @@ func insertVariableValues(expression string, state *State) string {
 		if char != '-' && (unicode.IsSpace(char) || unicode.IsPunct(char)) {
 			if index != cursor {
 				token := string(runes[cursor:index])
-				value, exists := state.Variables[token]
+				_, exists := state.Variables[token]
 
 				if exists {
-					buffer.WriteString(value)
+					buffer.WriteString("var(--")
+					buffer.WriteString(token)
+					buffer.WriteString(")")
 				} else {
 					buffer.WriteString(token)
 				}
