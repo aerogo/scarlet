@@ -7,7 +7,7 @@ import (
 
 func TestVariableInsertion(t *testing.T) {
 	state := NewState()
-	state.Variables["bg-color"] = "red"
+	state.Constants["bg-color"] = "red"
 
 	src := "linear-gradient(to bottom, 0% bg-color, 100% bg-color) 'bg-color'"
 

@@ -23,7 +23,9 @@ func compileChildren(node *codetree.CodeTree, parent *CSSRule, state *State) ([]
 	var animations []*Animation
 	var selectorsOnPreviousLines []string
 
+	// Iterate over child nodes
 	for _, child := range node.Children {
+		// Nodes with no children
 		if len(child.Children) == 0 {
 			// Comments
 			if strings.HasPrefix(child.Line, "//") {
@@ -39,11 +41,18 @@ func compileChildren(node *codetree.CodeTree, parent *CSSRule, state *State) ([]
 			equal := strings.IndexByte(child.Line, '=')
 
 			if equal != -1 {
-				// Variables
-				name := strings.TrimSpace(child.Line[:equal])
 				value := strings.TrimSpace(child.Line[equal+1:])
 				value = insertVariableValues(value, state)
-				state.Variables[name] = value
+
+				if strings.HasPrefix(child.Line, "const ") {
+					// Constants
+					name := strings.TrimSpace(child.Line[len("const "):equal])
+					state.Constants[name] = value
+				} else {
+					// Variables
+					name := strings.TrimSpace(child.Line[:equal])
+					state.Variables[name] = value
+				}
 			} else if parent != nil && strings.IndexByte(child.Line, ' ') != -1 {
 				// Statements
 				statement := compileStatement(child.Line, state)
@@ -188,6 +197,8 @@ func insertVariableValues(expression string, state *State) string {
 		if char != '-' && (unicode.IsSpace(char) || unicode.IsPunct(char)) {
 			if index != cursor {
 				token := string(runes[cursor:index])
+
+				// Check dynamic CSS variables
 				_, exists := state.Variables[token]
 
 				if exists {
@@ -195,7 +206,14 @@ func insertVariableValues(expression string, state *State) string {
 					buffer.WriteString(token)
 					buffer.WriteString(")")
 				} else {
-					buffer.WriteString(token)
+					// Check constants
+					value, exists := state.Constants[token]
+
+					if exists {
+						buffer.WriteString(value)
+					} else {
+						buffer.WriteString(token)
+					}
 				}
 			}
 
