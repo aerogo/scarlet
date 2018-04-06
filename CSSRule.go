@@ -9,6 +9,9 @@ import (
 	"github.com/OneOfOne/xxhash"
 )
 
+// Force interface implementation
+var _ Renderable = (*CSSRule)(nil)
+
 // CSSRule ...
 type CSSRule struct {
 	Selector   string

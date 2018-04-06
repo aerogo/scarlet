@@ -2,6 +2,9 @@ package scarlet
 
 import "bytes"
 
+// Force interface implementation
+var _ Renderable = (*MediaGroup)(nil)
+
 // MediaGroup ...
 type MediaGroup struct {
 	Operator string

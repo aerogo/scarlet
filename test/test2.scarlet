@@ -3,6 +3,9 @@ text-color = blue
 text-hover-color = text-color
 gradient = linear-gradient(to bottom, 0% text-color, 100% text-color)
 
+// Constants
+const bg-color = red
+
 // Mixins
 mixin horizontal
 	display flex
@@ -32,18 +35,18 @@ p
 a
 	color red
 	on-hover
-	
+
 	// Another comment
 	:active
 		color blue
 
 // Different types of selectors
 #content
-	color black
+	color bg-color
 	:hover
 		color red
 	> div
-		color blue
+		color orange
 	img
 		border none
 	[aria-class="button"]
@@ -60,3 +63,13 @@ div, p
 h1,
 h2
 	display none
+
+// WHen the block root is commented out,
+// ignore the whole block.
+// div
+	color black
+
+// Media query
+@media all and (min-height: 320px)
+	body
+		background-color bg-color

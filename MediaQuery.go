@@ -2,6 +2,9 @@ package scarlet
 
 import "bytes"
 
+// Force interface implementation
+var _ Renderable = (*MediaQuery)(nil)
+
 // MediaQuery ...
 type MediaQuery struct {
 	Selector string

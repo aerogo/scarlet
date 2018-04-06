@@ -2,6 +2,9 @@ package scarlet
 
 import "bytes"
 
+// Force interface implementation
+var _ Renderable = (*Animation)(nil)
+
 // Animation ...
 type Animation struct {
 	Name      string

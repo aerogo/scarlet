@@ -26,29 +26,57 @@ func Compile(src string, pretty bool) (string, error) {
 	rules = combineDuplicates(rules)
 
 	// CSS variables
-	output.WriteString(":root{")
-	for name, value := range state.Variables {
-		output.WriteString("--")
-		output.WriteString(name)
-		output.WriteByte(':')
-		output.WriteString(value)
-		output.WriteByte(';')
-	}
-	output.WriteString("}")
+	if len(state.Variables) > 0 {
+		if pretty {
+			output.WriteString(":root {\n")
+		} else {
+			output.WriteString(":root{")
+		}
 
-	// Render to output
+		for name, value := range state.Variables {
+			if pretty {
+				output.WriteString("\t")
+			}
+
+			output.WriteString("--")
+			output.WriteString(name)
+			output.WriteByte(':')
+
+			if pretty {
+				output.WriteString(" ")
+			}
+
+			output.WriteString(value)
+			output.WriteByte(';')
+
+			if pretty {
+				output.WriteString("\n")
+			}
+		}
+
+		output.WriteString("}")
+
+		if pretty {
+			output.WriteString("\n\n")
+		}
+	}
+
+	// Render rules
 	for _, rule := range rules {
 		rule.Render(output, pretty)
 	}
 
+	// Render animations
 	for _, animation := range animations {
 		animation.Render(output, pretty)
 	}
 
+	// Render media groups
 	for _, mediaGroup := range mediaGroups {
 		mediaGroup.Render(output, pretty)
 	}
 
+	// Render media queries
 	for _, mediaQuery := range mediaQueries {
 		mediaQuery.Render(output, pretty)
 	}

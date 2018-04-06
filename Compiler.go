@@ -80,6 +80,7 @@ func compileChildren(node *codetree.CodeTree, parent *CSSRule, state *State) ([]
 			}
 
 			childRules, _, _, _ := compileChildren(child, mixin.Root, state)
+
 			for _, childRule := range childRules {
 				mixin.Rules = append(mixin.Rules, childRule)
 			}
@@ -103,21 +104,24 @@ func compileChildren(node *codetree.CodeTree, parent *CSSRule, state *State) ([]
 
 		// Media query by size
 		if strings.HasPrefix(child.Line, "< ") || strings.HasPrefix(child.Line, "> ") {
-			media := &MediaGroup{}
-			parts := strings.Split(child.Line, " ")
+			// If this is a top level definition, it's a screen size query
+			if child.Indent == 0 {
+				media := &MediaGroup{}
+				parts := strings.Split(child.Line, " ")
 
-			media.Operator = parts[0]
-			media.Size = parts[1]
+				media.Operator = parts[0]
+				media.Size = parts[1]
 
-			if len(parts) >= 3 {
-				media.Property = parts[2]
-			} else {
-				media.Property = "width"
+				if len(parts) >= 3 {
+					media.Property = parts[2]
+				} else {
+					media.Property = "width"
+				}
+
+				media.Rules, _, _, _ = compileChildren(child, nil, state)
+				mediaGroups = append(mediaGroups, media)
+				continue
 			}
-
-			media.Rules, _, _, _ = compileChildren(child, nil, state)
-			mediaGroups = append(mediaGroups, media)
-			continue
 		}
 
 		// Animation
