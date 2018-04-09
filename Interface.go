@@ -33,7 +33,9 @@ func Compile(src string, pretty bool) (string, error) {
 			output.WriteString(":root{")
 		}
 
-		for name, value := range state.Variables {
+		for _, name := range state.VariableNames {
+			value := state.Variables[name]
+
 			if pretty {
 				output.WriteString("\t")
 			}
