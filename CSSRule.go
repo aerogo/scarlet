@@ -137,7 +137,7 @@ func (rule *CSSRule) SelectorPath(pretty bool) string {
 				fullPath.WriteString(" ")
 				fullPath.WriteString(rule.Selector)
 			} else {
-				fullPath.WriteString("<")
+				fullPath.WriteString(">")
 				fullPath.WriteString(strings.TrimSpace(rule.Selector[1:]))
 			}
 
