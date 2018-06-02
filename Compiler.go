@@ -82,7 +82,6 @@ func compileChildren(node *codetree.CodeTree, parent *CSSRule, state *State) ([]
 
 			childRules, _, _, _ := compileChildren(child, mixin.Root, state)
 			mixin.Rules = append(mixin.Rules, childRules...)
-
 			state.Mixins[name] = mixin
 			continue
 		}
@@ -129,7 +128,6 @@ func compileChildren(node *codetree.CodeTree, parent *CSSRule, state *State) ([]
 			}
 
 			anim.Keyframes, _, _, _ = compileChildren(child, nil, state)
-
 			animations = append(animations, anim)
 			continue
 		}
@@ -152,7 +150,6 @@ func compileChildren(node *codetree.CodeTree, parent *CSSRule, state *State) ([]
 			}
 
 			rules = append(rules, rule)
-
 			childRules, _, _, _ := compileChildren(child, rule, state)
 			rules = append(rules, childRules...)
 		}
