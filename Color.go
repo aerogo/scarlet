@@ -8,7 +8,7 @@ import (
 	colorful "github.com/lucasb-eyer/go-colorful"
 )
 
-var rgbRegex = regexp.MustCompile("rgb\\((.*?)\\)")
+var rgbRegex = regexp.MustCompile(`rgb\((.*?)\)`)
 
 func colorComponentToFloat(value string) float64 {
 	if strings.HasSuffix(value, "%") {

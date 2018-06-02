@@ -81,10 +81,7 @@ func compileChildren(node *codetree.CodeTree, parent *CSSRule, state *State) ([]
 			}
 
 			childRules, _, _, _ := compileChildren(child, mixin.Root, state)
-
-			for _, childRule := range childRules {
-				mixin.Rules = append(mixin.Rules, childRule)
-			}
+			mixin.Rules = append(mixin.Rules, childRules...)
 
 			state.Mixins[name] = mixin
 			continue

@@ -10,12 +10,12 @@ import (
 // Compile compiles the given scarlet code to a CSS string.
 func Compile(src string, pretty bool) (string, error) {
 	tree, err := codetree.New(src)
-	defer tree.Close()
 
 	if err != nil {
 		return "", err
 	}
 
+	defer tree.Close()
 	output := new(bytes.Buffer)
 	state := NewState()
 

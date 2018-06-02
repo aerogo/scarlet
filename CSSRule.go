@@ -116,37 +116,32 @@ func (rule *CSSRule) SelectorPath(pretty bool) string {
 	fullPath.WriteString(rule.Parent.SelectorPath(pretty))
 
 	// Whitespace if needed
-	for _, firstChar := range rule.Selector {
-		// Sub-elements always have a whitespace
-		switch firstChar {
-		case '|':
-			fullPath.WriteString(" ")
-			fullPath.WriteString(rule.Selector[1:])
+	switch rule.Selector[0] {
+	case '|':
+		fullPath.WriteString(" ")
+		fullPath.WriteString(rule.Selector[1:])
 
-		case '&':
-			fullPath.WriteString(rule.Selector[1:])
+	case '&':
+		fullPath.WriteString(rule.Selector[1:])
 
-		case '[':
-			fullPath.WriteString(rule.Selector)
+	case '[':
+		fullPath.WriteString(rule.Selector)
 
-		case ':':
-			fullPath.WriteString(rule.Selector)
+	case ':':
+		fullPath.WriteString(rule.Selector)
 
-		case '>':
-			if pretty {
-				fullPath.WriteString(" ")
-				fullPath.WriteString(rule.Selector)
-			} else {
-				fullPath.WriteString(">")
-				fullPath.WriteString(strings.TrimSpace(rule.Selector[1:]))
-			}
-
-		default:
+	case '>':
+		if pretty {
 			fullPath.WriteString(" ")
 			fullPath.WriteString(rule.Selector)
+		} else {
+			fullPath.WriteString(">")
+			fullPath.WriteString(strings.TrimSpace(rule.Selector[1:]))
 		}
 
-		break
+	default:
+		fullPath.WriteString(" ")
+		fullPath.WriteString(rule.Selector)
 	}
 
 	return fullPath.String()
