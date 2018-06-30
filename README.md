@@ -86,6 +86,13 @@ mixin vertical
 	flex-direction column
 ```
 
+Mixins can be used like this:
+
+```scarlet
+#sidebar
+	vertical
+```
+
 ## Animations
 
 ```scarlet
