@@ -43,6 +43,7 @@ func compileChildren(node *codetree.CodeTree, parent *CSSRule, state *State) ([]
 			if equal != -1 {
 				value := strings.TrimSpace(child.Line[equal+1:])
 				value = insertVariableValues(value, state)
+				value = optimizeColors(value)
 
 				if strings.HasPrefix(child.Line, "const ") {
 					// Constants
@@ -178,7 +179,7 @@ func compileStatement(statement string, state *State) *CSSStatement {
 	}
 }
 
-// insertVariableValues
+// insertVariableValues inserts the values of variables directly into the string.
 func insertVariableValues(expression string, state *State) string {
 	// EOF
 	runes := append([]rune(expression), ' ')
