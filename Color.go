@@ -9,6 +9,7 @@ import (
 )
 
 var rgbRegex = regexp.MustCompile(`rgb\((.*?)\)`)
+var zeroCommaRegex = regexp.MustCompile(`0(\.\d+)`)
 
 func colorComponentToFloat(value string) float64 {
 	if strings.HasSuffix(value, "%") {
@@ -25,9 +26,11 @@ func colorComponentToFloat(value string) float64 {
 	return float64(asByte) / 255.0
 }
 
-// optimizeColors optimizes color values by converting them to HEX format.
+// optimizeColors optimizes color values.
 func optimizeColors(value string) string {
 	value = strings.Replace(value, ", ", ",", -1)
+
+	// Convert RGB to HEX format
 	matches := rgbRegex.FindAllStringSubmatch(value, -1)
 
 	for _, match := range matches {
@@ -46,6 +49,15 @@ func optimizeColors(value string) string {
 		}
 
 		value = strings.Replace(value, rgbFunction, color.Hex(), 1)
+	}
+
+	// Remove 0 from comma values
+	zeroCommaMatches := zeroCommaRegex.FindAllStringSubmatch(value, -1)
+
+	for _, match := range zeroCommaMatches {
+		original := match[0]
+		replaced := match[1]
+		value = strings.Replace(value, original, replaced, 1)
 	}
 
 	return value
