@@ -7,6 +7,7 @@ import (
 	"os"
 	"path/filepath"
 	"regexp"
+	"sort"
 	"strings"
 	"sync"
 
@@ -92,6 +93,9 @@ func checkDirectory(dir string) {
 
 		return true
 	})
+
+	sort.Strings(usedClasses)
+	sort.Strings(unusedClasses)
 
 	fmt.Println("Referenced classes:")
 
