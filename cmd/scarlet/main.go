@@ -35,6 +35,7 @@ func main() {
 }
 
 func checkDirectory(dir string) {
+	wg := sync.WaitGroup{}
 	sourceFiles := sync.Map{}
 	cssClasses := sync.Map{}
 
@@ -44,7 +45,10 @@ func checkDirectory(dir string) {
 		}
 
 		if strings.HasSuffix(file, ".scarlet") {
+			wg.Add(1)
+
 			go func() {
+				defer wg.Done()
 				contents, err := ioutil.ReadFile(file)
 
 				if err != nil {
@@ -64,7 +68,10 @@ func checkDirectory(dir string) {
 		}
 
 		if strings.HasSuffix(file, ".go") || strings.HasSuffix(file, ".ts") {
+			wg.Add(1)
+
 			go func() {
+				defer wg.Done()
 				contents, err := ioutil.ReadFile(file)
 
 				if err != nil {
@@ -78,6 +85,9 @@ func checkDirectory(dir string) {
 
 		return nil
 	})
+
+	// Wait for goroutines to finish
+	wg.Wait()
 
 	usedClasses := []string{}
 	unusedClasses := []string{}
