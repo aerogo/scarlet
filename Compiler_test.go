@@ -8,7 +8,7 @@ import (
 	"time"
 
 	"github.com/aerogo/scarlet"
-	"github.com/blitzprog/color"
+	"github.com/akyoto/color"
 )
 
 func testFile(t *testing.T, filePath string) {

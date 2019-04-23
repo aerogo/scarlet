@@ -11,7 +11,7 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/blitzprog/color"
+	"github.com/akyoto/color"
 )
 
 var (
