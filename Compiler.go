@@ -151,8 +151,11 @@ func compileChildren(node *codetree.CodeTree, parent *CSSRule, state *State) ([]
 			}
 
 			rules = append(rules, rule)
-			childRules, _, _, _ := compileChildren(child, rule, state)
+			childRules, childGroups, childQueries, childAnimations := compileChildren(child, rule, state)
 			rules = append(rules, childRules...)
+			mediaGroups = append(mediaGroups, childGroups...)
+			mediaQueries = append(mediaQueries, childQueries...)
+			animations = append(animations, childAnimations...)
 		}
 	}
 
