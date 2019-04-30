@@ -15,6 +15,10 @@ type MediaGroup struct {
 
 // Render renders the media group to the output stream.
 func (media *MediaGroup) Render(output *strings.Builder, pretty bool) {
+	if len(media.Rules) == 0 {
+		return
+	}
+
 	output.WriteString("@media all and (")
 
 	switch media.Operator {

@@ -13,6 +13,10 @@ type MediaQuery struct {
 
 // Render renders the media query to the output stream.
 func (media *MediaQuery) Render(output *strings.Builder, pretty bool) {
+	if len(media.Rules) == 0 {
+		return
+	}
+
 	output.WriteString(media.Selector)
 
 	if pretty {

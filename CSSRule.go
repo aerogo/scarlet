@@ -25,7 +25,7 @@ func (rule *CSSRule) Render(output *strings.Builder, pretty bool) {
 		return
 	}
 
-	output.WriteString(rule.SelectorPath(pretty))
+	output.WriteString(strings.TrimSpace(rule.SelectorPath(pretty)))
 
 	if len(rule.Duplicates) > 0 {
 		for _, duplicate := range rule.Duplicates {
@@ -35,7 +35,7 @@ func (rule *CSSRule) Render(output *strings.Builder, pretty bool) {
 				output.WriteString(" ")
 			}
 
-			output.WriteString(duplicate.SelectorPath(pretty))
+			output.WriteString(strings.TrimSpace(duplicate.SelectorPath(pretty)))
 		}
 	}
 

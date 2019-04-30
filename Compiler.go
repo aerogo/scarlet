@@ -88,7 +88,7 @@ func compileChildren(node *codetree.CodeTree, parent *CSSRule, state *State) ([]
 		}
 
 		// Media query
-		if strings.HasPrefix(child.Line, "@") {
+		if strings.HasPrefix(child.Line, "@media") {
 			selector := strings.TrimSpace(child.Line)
 
 			media := &MediaQuery{
