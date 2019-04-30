@@ -118,3 +118,19 @@ func parseSelector(selector string) []SelectorPart {
 	next()
 	return parts
 }
+
+func splitSelector(selector string) []string {
+	parts := parseSelector(selector)
+	selectors := make([]string, 0, len(parts))
+	name := ""
+	for _, part := range parts {
+		if part.Type == SeparatorSelector {
+			selectors = append(selectors, name)
+			name = ""
+			continue
+		}
+		name += part.Name
+	}
+	selectors = append(selectors, name)
+	return selectors
+}

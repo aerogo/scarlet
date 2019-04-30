@@ -133,9 +133,7 @@ func compileChildren(node *codetree.CodeTree, parent *CSSRule, state *State) ([]
 			continue
 		}
 
-		// This isn't 100% correct but works in 99.9% of cases.
-		// TODO: Make this work for funky stuff like a[href$="a,b"]
-		selectors := strings.Split(child.Line, ",")
+		selectors := splitSelector(child.Line)
 
 		// Append selectors from previous lines
 		selectors = append(selectors, selectorsOnPreviousLines...)
