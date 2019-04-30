@@ -1,8 +1,8 @@
 package scarlet
 
 import (
+	"fmt"
 	"strings"
-
 	"unicode"
 
 	"github.com/aerogo/codetree"
@@ -12,7 +12,7 @@ import (
 // It iterates over the child nodes and finds the CSS rules.
 func compileChildren(node *codetree.CodeTree, parent *CSSRule, state *State) ([]*CSSRule, []*MediaGroup, []*MediaQuery, []*Animation) {
 	// Comments
-	if strings.HasPrefix(node.Line, "//") {
+	if node.Type == codetree.CommentType {
 		return nil, nil, nil, nil
 	}
 
@@ -27,7 +27,7 @@ func compileChildren(node *codetree.CodeTree, parent *CSSRule, state *State) ([]
 		// Nodes with no children
 		if len(child.Children) == 0 {
 			// Comments
-			if strings.HasPrefix(child.Line, "//") {
+			if child.Type == codetree.CommentType {
 				continue
 			}
 
@@ -66,9 +66,10 @@ func compileChildren(node *codetree.CodeTree, parent *CSSRule, state *State) ([]
 					mixinRules := mixin.Apply(parent)
 					rules = append(rules, mixinRules...)
 				} else {
-					panic("Invalid statement: " + child.Line)
+					panic(fmt.Sprintf("invalid statement %s", child))
 				}
 			}
+			continue
 		}
 
 		// Mixin
