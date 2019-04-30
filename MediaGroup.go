@@ -1,6 +1,6 @@
 package scarlet
 
-import "bytes"
+import "strings"
 
 // Force interface implementation
 var _ Renderable = (*MediaGroup)(nil)
@@ -14,7 +14,7 @@ type MediaGroup struct {
 }
 
 // Render renders the media group to the output stream.
-func (media *MediaGroup) Render(output *bytes.Buffer, pretty bool) {
+func (media *MediaGroup) Render(output *strings.Builder, pretty bool) {
 	output.WriteString("@media all and (")
 
 	switch media.Operator {

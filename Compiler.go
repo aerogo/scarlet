@@ -1,7 +1,6 @@
 package scarlet
 
 import (
-	"bytes"
 	"strings"
 
 	"unicode"
@@ -183,7 +182,7 @@ func compileStatement(statement string, state *State) *CSSStatement {
 func insertVariableValues(expression string, state *State) string {
 	// EOF
 	runes := append([]rune(expression), ' ')
-	buffer := bytes.Buffer{}
+	buffer := strings.Builder{}
 	ignore := ignoreReader{}
 	cursor := 0
 

@@ -1,6 +1,6 @@
 package scarlet
 
-import "bytes"
+import "strings"
 
 // Force interface implementation
 var _ Renderable = (*Animation)(nil)
@@ -12,7 +12,7 @@ type Animation struct {
 }
 
 // Render renders the animation to the output stream.
-func (anim *Animation) Render(output *bytes.Buffer, pretty bool) {
+func (anim *Animation) Render(output *strings.Builder, pretty bool) {
 	output.WriteString("@keyframes ")
 	output.WriteString(anim.Name)
 

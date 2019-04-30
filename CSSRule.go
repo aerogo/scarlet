@@ -1,7 +1,6 @@
 package scarlet
 
 import (
-	"bytes"
 	"sort"
 	"strconv"
 	"strings"
@@ -21,7 +20,7 @@ type CSSRule struct {
 }
 
 // Render renders the CSS rule into the output stream.
-func (rule *CSSRule) Render(output *bytes.Buffer, pretty bool) {
+func (rule *CSSRule) Render(output *strings.Builder, pretty bool) {
 	if len(rule.Statements) == 0 {
 		return
 	}
@@ -112,7 +111,7 @@ func (rule *CSSRule) SelectorPath(pretty bool) string {
 	}
 
 	// Parent path
-	var fullPath bytes.Buffer
+	fullPath := strings.Builder{}
 	fullPath.WriteString(rule.Parent.SelectorPath(pretty))
 
 	// Whitespace if needed

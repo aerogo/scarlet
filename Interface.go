@@ -1,7 +1,6 @@
 package scarlet
 
 import (
-	"bytes"
 	"strings"
 
 	"github.com/aerogo/codetree"
@@ -16,7 +15,7 @@ func Compile(src string, pretty bool) (string, error) {
 	}
 
 	defer tree.Close()
-	output := new(bytes.Buffer)
+	output := strings.Builder{}
 	state := NewState()
 
 	// Parse it
@@ -65,22 +64,22 @@ func Compile(src string, pretty bool) (string, error) {
 
 	// Render rules
 	for _, rule := range rules {
-		rule.Render(output, pretty)
+		rule.Render(&output, pretty)
 	}
 
 	// Render animations
 	for _, animation := range animations {
-		animation.Render(output, pretty)
+		animation.Render(&output, pretty)
 	}
 
 	// Render media groups
 	for _, mediaGroup := range mediaGroups {
-		mediaGroup.Render(output, pretty)
+		mediaGroup.Render(&output, pretty)
 	}
 
 	// Render media queries
 	for _, mediaQuery := range mediaQueries {
-		mediaQuery.Render(output, pretty)
+		mediaQuery.Render(&output, pretty)
 	}
 
 	return strings.TrimRight(output.String(), "\n"), nil

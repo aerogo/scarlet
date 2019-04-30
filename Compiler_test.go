@@ -28,15 +28,15 @@ func testFile(t *testing.T, filePath string) {
 }
 
 func TestCompiler1(t *testing.T) {
-	testFile(t, "test/test.scarlet")
+	testFile(t, "testdata/test.scarlet")
 }
 
 func TestCompiler2(t *testing.T) {
-	testFile(t, "test/test2.scarlet")
+	testFile(t, "testdata/test2.scarlet")
 }
 
 func BenchmarkCompiler(b *testing.B) {
-	src, _ := ioutil.ReadFile("test/test.scarlet")
+	src, _ := ioutil.ReadFile("testdata/test.scarlet")
 	code := string(src)
 
 	b.ReportAllocs()

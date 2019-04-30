@@ -1,6 +1,6 @@
 package scarlet
 
-import "bytes"
+import "strings"
 
 // Force interface implementation
 var _ Renderable = (*MediaQuery)(nil)
@@ -12,7 +12,7 @@ type MediaQuery struct {
 }
 
 // Render renders the media query to the output stream.
-func (media *MediaQuery) Render(output *bytes.Buffer, pretty bool) {
+func (media *MediaQuery) Render(output *strings.Builder, pretty bool) {
 	output.WriteString(media.Selector)
 
 	if pretty {
