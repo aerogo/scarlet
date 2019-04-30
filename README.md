@@ -132,7 +132,7 @@ body
 [report-url]: https://goreportcard.com/report/github.com/aerogo/scarlet
 [tests-image]: https://cloud.drone.io/api/badges/aerogo/scarlet/status.svg
 [tests-url]: https://cloud.drone.io/aerogo/scarlet
-[codecov-image]: https://codecov.io/gh/aerogo/scarlet/branch/master/graph/badge.svg
+[codecov-image]: https://codecov.io/gh/aerogo/scarlet/graph/badge.svg
 [codecov-url]: https://codecov.io/gh/aerogo/scarlet
 [license-image]: https://img.shields.io/badge/license-MIT-blue.svg
 [license-url]: https://github.com/aerogo/scarlet/blob/master/LICENSE
