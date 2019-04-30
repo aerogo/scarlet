@@ -44,7 +44,11 @@ func BenchmarkCompiler(b *testing.B) {
 
 	b.RunParallel(func(pb *testing.PB) {
 		for pb.Next() {
-			scarlet.Compile(code, false)
+			_, err := scarlet.Compile(code, false)
+
+			if err != nil {
+				b.Fail()
+			}
 		}
 	})
 }

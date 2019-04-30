@@ -39,7 +39,7 @@ func checkDirectory(dir string) {
 	sourceFiles := sync.Map{}
 	cssClasses := sync.Map{}
 
-	filepath.Walk(dir, func(file string, f os.FileInfo, err error) error {
+	err := filepath.Walk(dir, func(file string, f os.FileInfo, err error) error {
 		if f.IsDir() || strings.HasPrefix(file, ".") {
 			return nil
 		}
@@ -85,6 +85,10 @@ func checkDirectory(dir string) {
 
 		return nil
 	})
+
+	if err != nil {
+		panic(err)
+	}
 
 	// Wait for goroutines to finish
 	wg.Wait()

@@ -156,8 +156,8 @@ func (rule *CSSRule) StatementsHash() string {
 	hash := xxhash.NewS64(0)
 
 	for _, statement := range rule.Statements {
-		hash.WriteString(statement.Property)
-		hash.WriteString(statement.Value)
+		_, _ = hash.WriteString(statement.Property)
+		_, _ = hash.WriteString(statement.Value)
 	}
 
 	return strconv.FormatUint(hash.Sum64(), 16)
