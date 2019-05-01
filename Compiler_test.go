@@ -2,7 +2,8 @@ package scarlet_test
 
 import (
 	"fmt"
-	"io/ioutil"
+	"io"
+	"os"
 	"strings"
 	"testing"
 	"time"
@@ -12,11 +13,14 @@ import (
 )
 
 func testFile(t *testing.T, filePath string) {
-	src, _ := ioutil.ReadFile(filePath)
-	code := string(src)
+	file, err := os.Open(filePath)
+
+	if err != nil {
+		panic(err)
+	}
 
 	start := time.Now()
-	css, _ := scarlet.Compile(code, true)
+	css, _ := scarlet.Compile(file, true)
 	elapsed := time.Since(start)
 
 	fmt.Println(css)
@@ -36,18 +40,27 @@ func TestCompiler2(t *testing.T) {
 }
 
 func BenchmarkCompiler(b *testing.B) {
-	src, _ := ioutil.ReadFile("testdata/test.scarlet")
-	code := string(src)
+	file, err := os.Open("testdata/test.scarlet")
+
+	if err != nil {
+		panic(err)
+	}
 
 	b.ReportAllocs()
 	b.ResetTimer()
 
 	b.RunParallel(func(pb *testing.PB) {
 		for pb.Next() {
-			_, err := scarlet.Compile(code, false)
+			_, err := file.Seek(0, io.SeekStart)
 
 			if err != nil {
-				b.Fail()
+				panic(err)
+			}
+
+			_, err = scarlet.Compile(file, false)
+
+			if err != nil {
+				panic(err)
 			}
 		}
 	})
