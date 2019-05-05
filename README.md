@@ -8,6 +8,12 @@
 
 Generates CSS from `.scarlet` files. Very similar to Stylus, but with higher compression.
 
+## CLI
+
+If you're looking for the official compiler, please install [pack](https://github.com/aerogo/pack).
+
+The CLI tool included in this repo offers a check to see if your classes are referenced or not via `scarlet -check`.
+
 ## Basic usage
 
 ```scarlet
