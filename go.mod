@@ -4,8 +4,9 @@ go 1.12
 
 require (
 	github.com/OneOfOne/xxhash v1.2.5
-	github.com/aerogo/codetree v1.2.1
+	github.com/aerogo/codetree v1.2.3
 	github.com/akyoto/color v1.8.3
 	github.com/lucasb-eyer/go-colorful v1.0.2
-	golang.org/x/sys v0.0.0-20190429190828-d89cdac9e872 // indirect
+	github.com/stretchr/objx v0.2.0 // indirect
+	golang.org/x/sys v0.0.0-20190509141414-a5b02f93d862 // indirect
 )
