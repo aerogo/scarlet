@@ -39,7 +39,8 @@ func compileChildren(node *codetree.CodeTree, parent *CSSRule, state *State) ([]
 
 			equal := strings.IndexByte(child.Line, '=')
 
-			if equal != -1 {
+			switch {
+			case equal != -1:
 				value := strings.TrimSpace(child.Line[equal+1:])
 				value = insertVariableValues(value, state)
 				value = optimizeColors(value)
@@ -54,11 +55,13 @@ func compileChildren(node *codetree.CodeTree, parent *CSSRule, state *State) ([]
 					state.VariableNames = append(state.VariableNames, name)
 					state.Variables[name] = value
 				}
-			} else if parent != nil && strings.IndexByte(child.Line, ' ') != -1 {
+
+			case parent != nil && strings.IndexByte(child.Line, ' ') != -1:
 				// Statements
 				statement := compileStatement(child.Line, state)
 				parent.Statements = append(parent.Statements, statement)
-			} else {
+
+			default:
 				// Mixin calls
 				mixin, exists := state.Mixins[child.Line]
 
