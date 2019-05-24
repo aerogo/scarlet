@@ -4,7 +4,7 @@
 [![Report][report-image]][report-url]
 [![Tests][tests-image]][tests-url]
 [![Coverage][coverage-image]][coverage-url]
-[![Patreon][patreon-image]][patreon-url]
+[![Sponsor][sponsor-image]][sponsor-url]
 
 Generates CSS from `.scarlet` files. Very similar to Stylus, but with higher compression.
 
@@ -142,7 +142,7 @@ Please take a look at the [style guidelines](https://github.com/akyoto/quality/b
 | --- | --- | --- |
 | [Cedric Fung](https://github.com/cedricfung) | [Scott Rayapoullé](https://github.com/soulcramer) | [Eduard Urbach](https://eduardurbach.com) |
 
-Want to see [your own name here?](https://www.patreon.com/eduardurbach)
+Want to see [your own name here?](https://github.com/users/akyoto/sponsorship)
 
 [godoc-image]: https://godoc.org/github.com/aerogo/scarlet?status.svg
 [godoc-url]: https://godoc.org/github.com/aerogo/scarlet
@@ -152,5 +152,5 @@ Want to see [your own name here?](https://www.patreon.com/eduardurbach)
 [tests-url]: https://cloud.drone.io/aerogo/scarlet
 [coverage-image]: https://codecov.io/gh/aerogo/scarlet/graph/badge.svg
 [coverage-url]: https://codecov.io/gh/aerogo/scarlet
-[patreon-image]: https://img.shields.io/badge/patreon-donate-green.svg
-[patreon-url]: https://www.patreon.com/eduardurbach
+[sponsor-image]: https://img.shields.io/badge/github-donate-green.svg
+[sponsor-url]: https://github.com/users/akyoto/sponsorship
