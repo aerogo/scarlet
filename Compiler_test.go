@@ -16,7 +16,7 @@ func testFile(t *testing.T, filePath string) {
 	file, err := os.Open(filePath)
 
 	if err != nil {
-		panic(err)
+		t.Fatal(err)
 	}
 
 	start := time.Now()
@@ -43,7 +43,7 @@ func BenchmarkCompiler(b *testing.B) {
 	file, err := os.Open("testdata/test.scarlet")
 
 	if err != nil {
-		panic(err)
+		b.Fatal(err)
 	}
 
 	b.ReportAllocs()
