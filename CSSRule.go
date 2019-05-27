@@ -1,11 +1,11 @@
 package scarlet
 
 import (
+	"bytes"
 	"sort"
-	"strconv"
 	"strings"
 
-	"github.com/OneOfOne/xxhash"
+	"github.com/akyoto/hash"
 )
 
 // Force interface implementation
@@ -147,17 +147,17 @@ func (rule *CSSRule) SelectorPath(pretty bool) string {
 }
 
 // StatementsHash returns a hash of all the statements which is used to find duplicate CSS rules.
-func (rule *CSSRule) StatementsHash() string {
+func (rule *CSSRule) StatementsHash() uint64 {
 	sort.Slice(rule.Statements, func(i, j int) bool {
 		return rule.Statements[i].Property < rule.Statements[j].Property
 	})
 
-	hash := xxhash.NewS64(0)
+	buffer := bytes.Buffer{}
 
 	for _, statement := range rule.Statements {
-		_, _ = hash.WriteString(statement.Property)
-		_, _ = hash.WriteString(statement.Value)
+		_, _ = buffer.WriteString(statement.Property)
+		_, _ = buffer.WriteString(statement.Value)
 	}
 
-	return strconv.FormatUint(hash.Sum64(), 16)
+	return hash.Reader(&buffer)
 }

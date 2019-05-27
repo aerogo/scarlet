@@ -8,7 +8,7 @@ package scarlet
 // a, p { color: blue; }
 func combineDuplicates(rules []*CSSRule) []*CSSRule {
 	result := []*CSSRule{}
-	seen := map[string]*CSSRule{}
+	seen := map[uint64]*CSSRule{}
 
 	for _, rule := range rules {
 		hash := rule.StatementsHash()
