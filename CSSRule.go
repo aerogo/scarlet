@@ -159,5 +159,5 @@ func (rule *CSSRule) StatementsHash() uint64 {
 		_, _ = buffer.WriteString(statement.Value)
 	}
 
-	return hash.Reader(&buffer)
+	return hash.Bytes(buffer.Bytes())
 }
