@@ -1,7 +1,7 @@
 github.com/DATA-DOG/go-sqlmock v1.3.3 h1:CWUqKXe0s8A2z6qCgkP4Kru7wC11YoAnoupUKFDnH08=
 github.com/DATA-DOG/go-sqlmock v1.3.3/go.mod h1:f/Ixk793poVmq4qj/V1dPUg2JEAKC73Q5eFN3EC/SaM=
-github.com/aerogo/codetree v1.2.5 h1:51RiNNUKKNzTvFlzoh+978D5M1TTQIYEzBwYDuBimUY=
-github.com/aerogo/codetree v1.2.5/go.mod h1:MhElfskRtfAKGy5ukRIFcLTtHcSCwLRBjDAlsbuFts0=
+github.com/aerogo/codetree v1.2.6 h1:q1KP5h7tr3JFQBkhr88iVa0/D1M3PLGBHFm6eglMEEg=
+github.com/aerogo/codetree v1.2.6/go.mod h1:MhElfskRtfAKGy5ukRIFcLTtHcSCwLRBjDAlsbuFts0=
 github.com/akyoto/color v1.8.5 h1:xvHRmBJdsT5HJxnfyIT8l3zNbexA/2YIIeAlaHuhYGY=
 github.com/akyoto/color v1.8.5/go.mod h1:mI8lhoKcgnvH8fnaupVUE3BmKUp2bpDn5wFS1xEQ4hw=
 github.com/akyoto/hash v0.4.0 h1:M9Q3E6cOAxbf7q3yu5SZZdbZxC4thndCkqJctxl1+zg=
@@ -37,4 +37,6 @@ golang.org/x/sys v0.0.0-20190523142557-0e01d883c5c5 h1:sM3evRHxE/1RuMe1FYAL3j7C7
 golang.org/x/sys v0.0.0-20190523142557-0e01d883c5c5/go.mod h1:h1NjWce9XRLGQEsW7wpKNCjG9DtNlClVuFLEZdDNbEs=
 golang.org/x/sys v0.0.0-20190602015325-4c4f7f33c9ed h1:uPxWBzB3+mlnjy9W58qY1j/cjyFjutgw/Vhan2zLy/A=
 golang.org/x/sys v0.0.0-20190602015325-4c4f7f33c9ed/go.mod h1:h1NjWce9XRLGQEsW7wpKNCjG9DtNlClVuFLEZdDNbEs=
+golang.org/x/sys v0.0.0-20190608050228-5b15430b70e3 h1:xUZPeCzQtkdgRi9RjXIA+3w3RdyDLPqiaJlza5Fqpog=
+golang.org/x/sys v0.0.0-20190608050228-5b15430b70e3/go.mod h1:h1NjWce9XRLGQEsW7wpKNCjG9DtNlClVuFLEZdDNbEs=
 golang.org/x/tools v0.0.0-20190106171756-3ef68632349c/go.mod h1:n7NCudcB/nEzxVGmLbDWY5pfWTLqBcC2KZ6jyYvM4mQ=
