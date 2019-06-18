@@ -28,7 +28,8 @@ func colorComponentToFloat(value string) float64 {
 
 // optimizeColors optimizes color values.
 func optimizeColors(value string) string {
-	value = strings.Replace(value, ", ", " ", -1)
+	value = strings.ReplaceAll(value, ", ", " ")
+	value = strings.ReplaceAll(value, ",", " ")
 
 	// Convert RGB to HEX format
 	matches := rgbRegex.FindAllStringSubmatch(value, -1)
